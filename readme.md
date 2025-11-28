@@ -13,6 +13,31 @@ Currently it only supports x86-64 gcc (and only the version you have
 installed locally), changing this to be more dynamic is trivial. the reason
 I didnt implement it is because I dont need it (yet).
 
+## installation
+You can git clone the repo and require it.
+then you can call `.setup()` and add your
+prefered keymaps. You can also add an entry
+to your lazy.nvim plugin list
+
+```lua
+-- plugins/c4x.lua
+return {
+  "NuggetOfficial/c4x.nvim"
+  config = function() 
+    local builtins = require("c4x");
+    -- your config here
+
+  end
+}
+```
+To have everything automatic you can set
+`track_on_enter` and `open_on_enter` to
+to true in setup({}), otherwise find a nice
+keybind for at least:
+
+`builtin.toggle_asm_panel`
+`builtin.toggle_track_current_buffer`
+
 ## planned features
 
 - [ ] comparision feature, allowing you to compare codegen of two different files
