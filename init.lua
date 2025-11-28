@@ -10,6 +10,7 @@ local panel = {
   win = nil,
   buf = nil
 }
+
 local cfg = {}
 
 local ensure_panel = function( opts )
@@ -38,7 +39,11 @@ local ensure_panel = function( opts )
   return panel
 end
 
-local cexpl_compile_to_asm = function(caller, opts)
+local compile_to_asm = function(caller, opts)
+  -- TODO add compiler layer that allows users to switch
+  -- to clang or so, maybe also rust, needs to see which
+  -- flags to use to get a good represenation of the used
+  -- instructions
   opts = opts or {}
   
   local lines = table.concat(vim.api.nvim_buf_get_lines(caller, 0, -1, false),"\n");
@@ -50,8 +55,8 @@ local cexpl_compile_to_asm = function(caller, opts)
     "-fno-asynchronous-unwind-tables",
     "-fzero-call-used-regs=skip",
     "-x", "c",
-    "-S", "-",
-    "-o", "-"
+    "-S", "-", -- '-' maps to stdin
+    "-o", "-"  -- '-' maps to stdout
   }
   
   local output = vim.system(gcc, {text = true, stdin = lines}):wait()
@@ -62,7 +67,7 @@ local cexpl_compile_to_asm = function(caller, opts)
   return "cexpl: an error has occured\n" .. output.stderr
 end
 
-local cexpl_filter_asm = function(asm, opts)
+local filter_asm = function(asm, opts)
   opts = opts or {}
   local lines = vim.split(asm or "", "\n", {plain=true})
 
@@ -80,10 +85,10 @@ local cexpl_filter_asm = function(asm, opts)
   return r
 end
 
-local cexpl_emit_asm = function(caller, opts)
+local emit_asm = function(caller, opts)
   opts = opts or {}
-  local asm = cexpl_compile_to_asm(caller, opts)
-  local filtered = cexpl_filter_asm(asm, opts)
+  local asm = compile_to_asm(caller, opts)
+  local filtered = filter_asm(asm, opts)
 
   return filtered
 end
@@ -110,7 +115,7 @@ end
 
 local update_current_tab = function()
   if session.focus then
-    local asm = cexpl_emit_asm(session.focus)
+    local asm = emit_asm(session.focus)
     write_to_panel(1, -1, asm)
   else
     write_to_panel(1, -1, {})
