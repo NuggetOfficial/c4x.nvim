@@ -64,7 +64,7 @@ local compile_to_asm = function(caller, opts)
     return output.stdout
   end
 
-  return "cexpl: an error has occured\n" .. output.stderr
+  return "c4x: an error has occured\n" .. output.stderr
 end
 
 local filter_asm = function(asm, opts)
