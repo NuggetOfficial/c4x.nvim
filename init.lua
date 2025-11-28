@@ -261,15 +261,6 @@ end
 M.setup = function(opts) 
   opts = opts or {}
 
-  vim.keymap.set("n","<leader>as", M.toggle_asm_panel, {desc="toggle live asm panel"})
-  vim.keymap.set("n","<leader>aw", M.toggle_track_current_buffer,
-    {desc="track/untrack current buffer"})
-  vim.keymap.set("n","<leader>ad", M.remove_focus_buffer,
-    {desc="stop tracking current focus"})
-
-  vim.keymap.set("n","<leader>ah", M.panel_go_left)
-  vim.keymap.set("n","<leader>al", M.panel_go_right)
-
   cfg.open_on_enter  = opts.open_on_enter  or true
   cfg.track_on_enter = opts.track_on_enter or true
 end
