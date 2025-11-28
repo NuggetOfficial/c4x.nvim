@@ -15,10 +15,16 @@ I didnt implement it is because I dont need it (yet).
 
 ## planned features
 
--[ ] comparision feature, allowing you to compare codegen of two different files
--[ ] git integration, allowing you to compare codegen across branches
--[ ] clipped line printing for the tabs in the panel
--[ ] generic compiler infrastructure (supporting clang and maybe also cargo or g++)
--[ ] command block, that allows you to change the extra compiler flags on the fly.
--[ ] asynchronous io so that big compiles dont block the user experience (specially for c++ and rust)
--[ ] better modularity for keybinds etc.
+- [ ] comparision feature, allowing you to compare codegen of two different files
+
+- [ ] git integration, allowing you to compare codegen across branches
+
+- [ ] clipped line printing for the tabs in the panel
+
+- [ ] generic compiler infrastructure (supporting clang and maybe also cargo or g++)
+
+- [ ] command block, that allows you to change the extra compiler flags on the fly.
+
+- [ ] asynchronous io so that big compiles dont block the user experience (specially for c++ and rust)
+
+- [ ] better modularity for keybinds etc.
