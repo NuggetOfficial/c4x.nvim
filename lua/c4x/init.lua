@@ -17,7 +17,7 @@ local ensure_panel = function( opts )
   if panel.win and vim.api.nvim_win_is_valid(panel.win) then
     return panel
   end
-  
+
   opts = opts or {}
   if opts.buf and vim.api.nvim_buf_is_valid(opts.buf) then
     panel.buf = opts.buf
@@ -30,12 +30,12 @@ local ensure_panel = function( opts )
     win = 0,
     width = 80,
   })
-  
-  vim.api.nvim_buf_set_option(panel.buf, "filetype", "asm")
-  vim.api.nvim_buf_set_option(panel.buf, "buftype", "nofile")
-  vim.api.nvim_buf_set_option(panel.buf, "bufhidden", "wipe")
- 
- 
+
+  vim.api.nvim_set_option_value("filetype", "asm", {buf=panel.buf})
+  vim.api.nvim_set_option_value("buftype", "nofile", {buf=panel.buf})
+  vim.api.nvim_set_option_value("bufhidden", "wipe", {buf=panel.buf})
+
+
   return panel
 end
 
@@ -45,7 +45,7 @@ local compile_to_asm = function(caller, opts)
   -- flags to use to get a good represenation of the used
   -- instructions
   opts = opts or {}
-  
+
   local lines = table.concat(vim.api.nvim_buf_get_lines(caller, 0, -1, false),"\n");
   local gcc = {
     "gcc", opts.O or "-O3",
@@ -58,7 +58,7 @@ local compile_to_asm = function(caller, opts)
     "-S", "-", -- '-' maps to stdin
     "-o", "-"  -- '-' maps to stdout
   }
-  
+
   local output = vim.system(gcc, {text = true, stdin = lines}):wait()
   if (output.stderr == "" or output.stderr == nil) then
     return output.stdout
@@ -94,9 +94,9 @@ local emit_asm = function(caller, opts)
 end
 
 local write_to_panel = function(start, stop, lines)
-  vim.api.nvim_buf_set_option(panel.buf, "modifiable", true)
+  vim.api.nvim_set_option_value("modifiable", true, {buf=panel.buf})
   vim.api.nvim_buf_set_lines(panel.buf, start, stop, false, lines)
-  vim.api.nvim_buf_set_option(panel.buf, "modifiable", false)
+  vim.api.nvim_set_option_value("modifiable", false, {buf=panel.buf})
 end
 
 local update_tabs = function()
@@ -139,7 +139,7 @@ M.toggle_asm_panel = function()
 
   ensure_panel({buf=panel.buf})
   update_panel()
-  return
+
 end
 
 
@@ -147,7 +147,7 @@ M.attach_buffer = function(bufnr, lang)
   if session.tabs[bufnr] then
     return
   end
-  
+
   session.focus = bufnr
   session.tabs[bufnr] = {
     lang = lang,
@@ -156,7 +156,7 @@ M.attach_buffer = function(bufnr, lang)
     )
   }
   table.insert(session.order, bufnr)
-  
+
   vim.api.nvim_create_autocmd({"TextChanged", "InsertLeave"}, {
     buffer = bufnr,
     callback = function()
@@ -171,7 +171,7 @@ M.attach_buffer = function(bufnr, lang)
       session[bufnr] = nil
     end,
   })
-      
+
   end
 
 M.remove_focus_buffer = function()
@@ -216,7 +216,7 @@ M.track_current_buffer = function()
 end
 
 M.toggle_track_current_buffer = function()
-  
+
   local buf = vim.api.nvim_get_current_buf()
 
   if not session.tabs[buf] then
@@ -258,7 +258,7 @@ end
 
 
 
-M.setup = function(opts) 
+M.setup = function(opts)
   opts = opts or {}
 
   cfg.open_on_enter  = opts.open_on_enter  or true
@@ -281,9 +281,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
     if session.tabs[ev.buf] then
       session.focus = ev.buf
       update_panel()
-    end  
-
-    return
+    end
   end
 })
 
